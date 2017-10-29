@@ -21,10 +21,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/**
- *
- * @author Ponk
- */
 public class DatabaseTO {
     
     public static List<Game> getGames(){
