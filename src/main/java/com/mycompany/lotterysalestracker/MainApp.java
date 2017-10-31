@@ -24,16 +24,12 @@ public class MainApp extends Application {
         root.setHgrow(content, Priority.ALWAYS);
         root.setVgrow(content, Priority.ALWAYS);
         VBox navList = new VBox();
-        root.setHgrow(navList, Priority.ALWAYS);
-        root.setVgrow(navList, Priority.ALWAYS);
         manage = new Manage();
         scan = new Scan();
         stats = new Stats();
         root.add(navList, 0, 0);
         root.add(content, 1, 0);
         root.setVgrow(navList, Priority.ALWAYS);
-        root.setVgrow(content, Priority.ALWAYS);
-        root.setHgrow(content, Priority.ALWAYS);
         content.setFillWidth(true);       
         
         Button manageNav = new Button("Manage");
