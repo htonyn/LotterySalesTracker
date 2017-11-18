@@ -4,6 +4,8 @@ import javafx.collections.FXCollections;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -13,11 +15,16 @@ import javafx.scene.text.Text;
 public class Manage extends GridPane {
     GridPane addGameBox;
     GridPane currentGameBox;
+    final String cssDefault = "-fx-border-color: blue;\n"
+                + "-fx-border-insets: 5;\n"
+                + "-fx-border-width: 3;\n"
+                + "-fx-border-style: dashed;\n";
     public Manage() {
         addGameBox = new GridPane();
         addGameBox.setPrefHeight(800);
         currentGameBox = new GridPane();
         initializeView();
+        populateTableView();
         
         TabPane tp = new TabPane();
         tp.setStyle("-fx-background-color: white;");
@@ -37,7 +44,16 @@ public class Manage extends GridPane {
     }
     
     public void populateTableView() {
-//        GameTable gt = new GameTable(FXCollections.observableArrayList());
+        GameTable gt = new GameTable();
+//        TableView table = new TableView();
+//        TableColumn col1 = new TableColumn("Potato1");
+//        TableColumn col2 = new TableColumn("Potato2");
+//        table.getColumns().addAll(col1, col2);
+//        table.setPrefWidth(800);
+//        table.setPrefHeight(800);
+//        table.setStyle(cssDefault);
+        addGameBox.add(gt, 0, 1, 3, 1);
+        addGameBox.setVgrow(gt, Priority.ALWAYS);
     }
     
     public void initializeView() {
