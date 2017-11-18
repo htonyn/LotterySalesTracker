@@ -14,7 +14,6 @@ import javafx.beans.property.SimpleStringProperty;
  */
 public class Game {
     
-    
     private final SimpleStringProperty name;
     private final SimpleIntegerProperty gameNumber;
 
@@ -38,6 +37,4 @@ public class Game {
     public void setGameNumber(int gameNumber) {
         this.gameNumber.set(gameNumber);
     }
-    
-    
 }
