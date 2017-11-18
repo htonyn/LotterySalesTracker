@@ -22,14 +22,15 @@ public class MainApp extends Application {
         content = new VBox();
         root.setHgrow(content, Priority.ALWAYS);
         root.setVgrow(content, Priority.ALWAYS);
-        VBox navList = new VBox();
+        VBox navList = new VBox(2);
         manage = new Manage();
         scan = new Scan();
         stats = new Stats();
         root.add(navList, 0, 0);
         root.add(content, 1, 0);
         root.setVgrow(navList, Priority.ALWAYS);
-        content.setFillWidth(true);       
+        content.setFillWidth(true);      
+        navList.setMinWidth(100);
         
         Button manageNav = new Button("Manage");
         manageNav.setMaxWidth(Double.MAX_VALUE);
@@ -37,7 +38,6 @@ public class MainApp extends Application {
         scanNav.setMaxWidth(Double.MAX_VALUE);
         Button dataNav = new Button("Data");
         dataNav.setMaxWidth(Double.MAX_VALUE);
-        content.setStyle("-fx-padding: 1; -fx-background-color: green, -fx-control-inner-background; -fx-background-insets: 0, 1;");
         
         navList.getChildren().addAll(manageNav, scanNav, dataNav);
         
