@@ -15,10 +15,6 @@ import javafx.scene.text.Text;
 public class Manage extends GridPane {
     GridPane addGameBox;
     GridPane currentGameBox;
-    final String cssDefault = "-fx-border-color: blue;\n"
-                + "-fx-border-insets: 5;\n"
-                + "-fx-border-width: 3;\n"
-                + "-fx-border-style: dashed;\n";
     public Manage() {
         addGameBox = new GridPane();
         addGameBox.setPrefHeight(800);
@@ -45,15 +41,9 @@ public class Manage extends GridPane {
     
     public void populateTableView() {
         GameTable gt = new GameTable();
-//        TableView table = new TableView();
-//        TableColumn col1 = new TableColumn("Potato1");
-//        TableColumn col2 = new TableColumn("Potato2");
-//        table.getColumns().addAll(col1, col2);
-//        table.setPrefWidth(800);
-//        table.setPrefHeight(800);
-//        table.setStyle(cssDefault);
         addGameBox.add(gt, 0, 1, 3, 1);
-        addGameBox.setVgrow(gt, Priority.ALWAYS);
+//        TicketTable tt = new TicketTable();
+//        currentGameBox.add(tt, 0, 1, 3, 1);
     }
     
     public void initializeView() {
@@ -92,15 +82,16 @@ public class Manage extends GridPane {
         Region r2 = new Region();
         currentGameControls.add(addBook, 0, 0);
         currentGameControls.add(r1, 1, 0);
-        currentGameControls.add(removeBook, 0, 0);
+        currentGameControls.add(removeBook, 2, 0);
         currentGameControls.add(r2, 3, 0);
         currentGameControls.add(finishBook, 4, 0);
         currentGameControls.setHgrow(r1, Priority.ALWAYS);
         currentGameControls.setHgrow(r2, Priority.ALWAYS);
         currentGameBox.add(new Text("Current Books"), 0, 0);
         currentGameBox.add(currentGameControls, 0, 3);
-        currentGameBox.add(vSpace1, 0, 3);
+        currentGameBox.add(vSpace1, 0, 2);
         currentGameBox.setVgrow(vSpace1, Priority.ALWAYS);
+        currentGameBox.setHgrow(currentGameControls, Priority.ALWAYS);
         
         addBook.setOnAction( 
             (event) -> {

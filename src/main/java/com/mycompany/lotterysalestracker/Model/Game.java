@@ -1,25 +1,17 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.mycompany.lotterysalestracker.Model;
 
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
-/**
- *
- * @author Ponk
- */
 public class Game {
-    
     private final SimpleStringProperty name;
     private final SimpleIntegerProperty gameNumber;
+    private final SimpleIntegerProperty gameValue;
 
-    public Game(String name, int gameNumber) {
+    public Game(String name, int gameNumber, int gameValue) {
         this.name = new SimpleStringProperty(name);
         this.gameNumber = new SimpleIntegerProperty(gameNumber);
+        this.gameValue = new SimpleIntegerProperty(gameValue);
     }
 
     public String getName() {
@@ -36,5 +28,13 @@ public class Game {
 
     public void setGameNumber(int gameNumber) {
         this.gameNumber.set(gameNumber);
+    }
+    
+    public int getGameValue() {
+        return gameValue.get();
+    }
+
+    public void setGameValue(int gameValue) {
+        this.gameValue.set(gameValue);
     }
 }

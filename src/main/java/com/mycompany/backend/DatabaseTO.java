@@ -18,17 +18,17 @@ import java.io.Writer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 public class DatabaseTO {
-    
     public static List<Game> getGames(){
         Gson gson = new Gson();
         BufferedReader bufferedReader = null;
         List<Game> games = new ArrayList<>();
         try{
-            bufferedReader = new BufferedReader(new FileReader("Games.json"));
+            bufferedReader = new BufferedReader(new FileReader("Game.json"));
             games = gson.fromJson(bufferedReader, new TypeToken<List<Game>>(){}.getType());
         }catch(FileNotFoundException fnfe){
             fnfe.printStackTrace();
@@ -44,12 +44,12 @@ public class DatabaseTO {
         return games;
     }
     
-    public static List<Ticket> getTickets(){
+    public static List<Ticket> getTickets(String filePath){
         Gson gson = new Gson();
         BufferedReader bufferedReader = null;
         List<Ticket> tickets = new ArrayList<>();
         try{
-            bufferedReader = new BufferedReader(new FileReader("Tickets.json"));
+            bufferedReader = new BufferedReader(new FileReader(filePath));
             tickets = gson.fromJson(bufferedReader, new TypeToken<List<Ticket>>(){}.getType());
         }catch(FileNotFoundException fnfe){
             fnfe.printStackTrace();
@@ -75,7 +75,7 @@ public class DatabaseTO {
     }
     
     public static void createDailyReport(List<Ticket> tickets){
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date date = new Date();
         try(Writer writer = new FileWriter("Tickets" + dateFormat.format(date)  + ".json"){}){
             Gson gson = new Gson();

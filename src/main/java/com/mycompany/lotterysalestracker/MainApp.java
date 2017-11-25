@@ -44,7 +44,7 @@ public class MainApp extends Application {
         manageNav.setOnAction(
             (event) -> {
                 content.getChildren().clear();
-                System.out.println("Manage");
+//                System.out.println("Manage");
                 content.getChildren().add(manage);
                 content.setVgrow(manage, Priority.ALWAYS);
                 
@@ -53,14 +53,14 @@ public class MainApp extends Application {
         scanNav.setOnAction(
             (event) -> {
                 content.getChildren().clear();
-                System.out.println("Scan");
+//                System.out.println("Scan");
                 content.getChildren().add(scan);
             }
         );
         dataNav.setOnAction(
             (event) -> {
                 content.getChildren().clear();
-                System.out.println("Data");
+//                System.out.println("Data");
                 content.getChildren().add(stats);
             }
         );
