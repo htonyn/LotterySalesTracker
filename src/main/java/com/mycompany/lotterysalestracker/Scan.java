@@ -6,6 +6,7 @@
 package com.mycompany.lotterysalestracker;
 
 import com.mycompany.backend.DatabaseTO;
+import com.mycompany.lotterysalestracker.Model.DayResult;
 import com.mycompany.lotterysalestracker.Model.Game;
 import com.mycompany.lotterysalestracker.Model.Ticket;
 import java.text.DateFormat;
@@ -15,11 +16,18 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -32,10 +40,12 @@ public class Scan extends GridPane {
     private TextArea scanTicketField;
     ArrayList<Ticket> yesterday;
     ArrayList<Ticket> today;
+    ArrayList<DayResult> result;
     List<Game> games;
     public Scan() {
         yesterday = new ArrayList<>();
         today = new ArrayList<>();
+        result = new ArrayList<>();
         setPrefWidth(1000);
         VBox instruction = new VBox(1);
         instruction.setPadding(new Insets(5, 5, 5, 5));
@@ -130,7 +140,19 @@ public class Scan extends GridPane {
                                 if (game.getGameNumber() == gameID) {
                                     gameNameLabel.setText(game.getName());
                                     price = game.getGameValue() * numSold;
-                                    today.add(new Ticket(getTicketName(gameID), gameID, bookID, ticketID));
+                                    int duplicate = 0;
+                                    for (Ticket ticketDupe : today) {
+                                        System.out.println("Ticket: "+ticketDupe.getBookNumber()+" vs Scan: "+bookID);
+                                        if(ticketDupe.getBookNumber() == bookID) {
+                                            duplicate = 1;
+                                            break;
+                                        }
+                                    }
+                                    System.out.println(duplicate);
+                                    if (duplicate == 0) {
+                                        today.add(new Ticket(getTicketName(gameID), gameID, bookID, ticketID));
+                                        result.add(new DayResult(getTicketName(gameID), gameID, getTicketValue(gameID), numSold, price));
+                                    }                                    
                                     break;
                                 }
                             }
@@ -153,7 +175,29 @@ public class Scan extends GridPane {
         Button finishDay = new Button("Finish Day");
         finishDay.setOnAction(
             (event) -> {
-                
+                DatabaseTO.createDailyReport(today);
+                TableView<DayResult> table = new TableView();
+                TableColumn gameNameColumn = new TableColumn("Name");
+                gameNameColumn.setCellValueFactory(new PropertyValueFactory<>("gameName"));
+                TableColumn gameNumberColumn = new TableColumn("Game Number");
+                gameNumberColumn.setCellValueFactory(new PropertyValueFactory<>("gameNumber"));
+                TableColumn ticketValueColumn = new TableColumn("Ticket Value");
+                ticketValueColumn.setCellValueFactory(new PropertyValueFactory<>("ticketValue"));
+                TableColumn ticketSoldColumn = new TableColumn("Tickets Sold");
+                ticketSoldColumn.setCellValueFactory(new PropertyValueFactory<>("ticketSold"));
+                TableColumn totalValueColumn = new TableColumn("Total Value");
+                totalValueColumn.setCellValueFactory(new PropertyValueFactory<>("totalValue"));
+                table.getColumns().addAll(gameNameColumn, gameNumberColumn, ticketValueColumn, ticketSoldColumn, totalValueColumn);
+                table.setItems(FXCollections.observableArrayList(result));
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.getDialogPane().setMaxHeight(USE_PREF_SIZE);
+                alert.setTitle("Day Finished!");
+                alert.setHeaderText("Results for the Date: "+dateFormat.format(date));
+                ScrollPane scroll = new ScrollPane();
+                scroll.setMaxHeight(600);
+                scroll.setContent(table);
+                alert.getDialogPane().setContent(scroll);
+                alert.showAndWait();
             }
         );
                 
@@ -175,25 +219,22 @@ public class Scan extends GridPane {
     }
 
     public String getTicketName(int gameid) {
-        String name = "";
         for (Game game : games) {
             if (gameid == game.getGameNumber()) {
-                name = game.getName();
-                break;
+                return game.getName();
             }
         }
-        return name;
+        return null;
     }
     
-    public void readJSON() {
-        for(Ticket ticket : DatabaseTO.getTickets("Tickets2017-11-24.json")){
-            
-            System.out.println("Name: " + getTicketName(ticket.getGameNumber()));
-            System.out.println("Number: " + ticket.getGameNumber());
-            System.out.println("Ticket Number: " + ticket.getGameNumber());
+    public int getTicketValue(int gameid) {
+        for (Game game : games) {
+            if (gameid == game.getGameNumber()) {
+                return game.getGameValue();
+            }
         }
+        return -1;
     }
-    
     
     private Date yesterday() {
         final Calendar cal = Calendar.getInstance();
@@ -212,6 +253,15 @@ public class Scan extends GridPane {
 //        }
     }
     
+    // The methods below are merely dummy data for testing each part before
+    // real implementation
+    public void readJSON() {
+        for(Ticket ticket : DatabaseTO.getTickets("Tickets2017-11-24.json")){
+            System.out.println("Name: " + getTicketName(ticket.getGameNumber()));
+            System.out.println("Number: " + ticket.getGameNumber());
+            System.out.println("Ticket Number: " + ticket.getGameNumber());
+        }
+    }
     public void generateGames() {
         List<Game> games = new ArrayList<>();
         games.add(new Game("Triple Play", 1282, 2));
@@ -225,12 +275,12 @@ public class Scan extends GridPane {
     }
     public void generateDummyJSON() {
         ArrayList<Ticket> tickets = new ArrayList<>();
-        tickets.add(new Ticket(getTicketName(1282), 1282, 12, 24669));
-        tickets.add(new Ticket(getTicketName(1283), 1283, 22, 6258));
-        tickets.add(new Ticket(getTicketName(1120), 1120, 54, 416361));
-        tickets.add(new Ticket(getTicketName(1284), 1284, 2, 9200));
-        tickets.add(new Ticket(getTicketName(1011), 1011, 21, 1614936));
-        tickets.add(new Ticket(getTicketName(1002), 1002, 41, 1320339));
+        tickets.add(new Ticket(getTicketName(1282), 1282, 24669, 12));
+        tickets.add(new Ticket(getTicketName(1283), 1283, 6258, 22));
+        tickets.add(new Ticket(getTicketName(1120), 1120, 416361, 54));
+        tickets.add(new Ticket(getTicketName(1284), 1284, 9200, 2));
+        tickets.add(new Ticket(getTicketName(1011), 1011, 1614936, 21));
+        tickets.add(new Ticket(getTicketName(1002), 1002, 1320339, 41));
         
         DatabaseTO.createDailyReport(tickets);
     }

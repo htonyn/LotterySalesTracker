@@ -6,41 +6,40 @@ import java.util.Iterator;
 import java.util.List;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 
-public class FileDrag extends Pane {
+public class FileDrag extends StackPane {
     private List listeners = new ArrayList();
     public FileDrag() {
-        Rectangle rekt = new Rectangle();
-        rekt.relocate(50, 50);
-        rekt.setWidth(300.0);
-        rekt.setHeight(100.0);
-        rekt.setFill(Color.LIGHTGREEN);
+        Rectangle fileInputZone = new Rectangle();
+        fileInputZone.setWidth(400.0);
+        fileInputZone.setHeight(100.0);
+        fileInputZone.setFill(Color.LIGHTGREEN);
         
-        rekt.setOnDragEntered(
-            (DragEvent event) -> {
-                if(event.getSource() == rekt && event.getDragboard().hasFiles()) {
-                    rekt.setFill(Color.DARKGREEN);
+        fileInputZone.setOnDragEntered((DragEvent event) -> {
+                if(event.getSource() == fileInputZone && event.getDragboard().hasFiles()) {
+                    fileInputZone.setFill(Color.DARKGREEN);
                 }
                 event.consume();
             }
         );
         
-        rekt.setOnDragExited(
-            (DragEvent event) -> {
-                rekt.setFill(Color.LIGHTGREEN);
+        fileInputZone.setOnDragExited((DragEvent event) -> {
+                fileInputZone.setFill(Color.LIGHTGREEN);
                 event.consume();
             }
         );
         
-        rekt.setOnDragOver(
+        fileInputZone.setOnDragOver(
             (DragEvent event) -> {
                 if(event.getDragboard().hasFiles()) {
                     for (File f: event.getDragboard().getFiles()) {
@@ -50,7 +49,7 @@ public class FileDrag extends Pane {
             }
         );
         
-        rekt.setOnDragDropped(
+        fileInputZone.setOnDragDropped(
             (DragEvent event) -> {
                 if(event.getDragboard().hasFiles()) {
                     for (File f: event.getDragboard().getFiles()) {
@@ -62,7 +61,7 @@ public class FileDrag extends Pane {
             }
         );
         
-        rekt.setOnMouseClicked(new EventHandler<MouseEvent>()
+        fileInputZone.setOnMouseClicked(new EventHandler<MouseEvent>()
         {
             @Override
             public void handle(MouseEvent t) {
@@ -80,8 +79,8 @@ public class FileDrag extends Pane {
                 }
             }
         });
-        
-        this.getChildren().addAll(rekt);
+        Label instruction = new Label("Click here to select file, or drag and drop a file here");
+        this.getChildren().addAll(fileInputZone, instruction);
     }
     public void addListener(FileListener listener) {
         listeners.add(listener);
