@@ -71,10 +71,10 @@ public class Scan extends GridPane {
         Region r = new Region();
 //        bookBox.add(r, 1, 1);
 //        bookBox.setHgrow(r, Priority.ALWAYS);
-        final String cssDefault = "-fx-border-color: blue;\n"
-                + "-fx-border-insets: 5;\n"
-                + "-fx-border-width: 3;\n"
-                + "-fx-border-style: dashed;\n";
+//        final String cssDefault = "-fx-border-color: blue;\n"
+//                + "-fx-border-insets: 5;\n"
+//                + "-fx-border-width: 3;\n"
+//                + "-fx-border-style: dashed;\n";
         VBox labels = new VBox(10);
         bookBox.setHgrow(labels, Priority.ALWAYS);
         labels.setPrefHeight(800);

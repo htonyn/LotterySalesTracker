@@ -37,5 +37,10 @@ public class TicketTable extends ScrollPane {
         this.setPrefWidth(800);
         setContent(table);
     }
-    
+    public Ticket getSelectedItem() {
+        if(table.getSelectionModel().getSelectedItem() != null) {
+            return table.getSelectionModel().getSelectedItem();
+        }
+        return null;
+    }
 }

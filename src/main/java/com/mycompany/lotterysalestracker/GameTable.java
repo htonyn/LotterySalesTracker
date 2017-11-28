@@ -13,10 +13,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 public class GameTable extends ScrollPane {
     private TableView<Game> table = new TableView();
-    
+    private ObservableList<Game> list;
     public GameTable(){
         List<Game> games = DatabaseTO.getGames();
-        ObservableList<Game> list = FXCollections.observableArrayList(games);
+        list = FXCollections.observableArrayList(games);
         TableColumn nameColumn = new TableColumn("Name");
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         
@@ -31,5 +31,17 @@ public class GameTable extends ScrollPane {
         table.setPrefWidth(700);
         this.setPrefWidth(800);
         this.setContent(table);
+    }
+    
+    public Game getSelectedItem() {
+        if(table.getSelectionModel().getSelectedItem() != null) {
+            return table.getSelectionModel().getSelectedItem();
+        }
+        return null;
+    }
+    
+    public void setItems(List<Game> games) {
+        list = FXCollections.observableArrayList(games);
+        table.setItems(list);
     }
 }
