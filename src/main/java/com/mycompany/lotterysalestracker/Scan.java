@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -36,49 +37,36 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 public class Scan extends GridPane {
-    private String gameName;
     private TextArea scanTicketField;
-    ArrayList<Ticket> yesterday;
-    ArrayList<Ticket> today;
-    ArrayList<DayResult> result;
+    List<Ticket> yesterday;
+    List<Ticket> today;
+    static List<DayResult> result;
     List<Game> games;
+    
     public Scan() {
         yesterday = new ArrayList<>();
         today = new ArrayList<>();
         result = new ArrayList<>();
         setPrefWidth(1000);
-        VBox instruction = new VBox(1);
-        instruction.setPadding(new Insets(5, 5, 5, 5));
-        Text title = new Text("Instructions");
-        title.setStyle("-fx-underline: true");
-        instruction.getChildren().addAll(
-            title,
-            new Text("1. Scan the Ticket"),
-            new Text("2. Ticket scanned will be displayed"),
-            new Text("3. Scan next ticket")
-        );
+        
+        VBox instruction = buildInstruction();
         add(instruction, 0, 0);
+        setHgrow(instruction, Priority.ALWAYS);
+        
         GridPane bookBox = new GridPane();
         bookBox.setPadding(new Insets(5, 5, 5, 5));
         add(bookBox, 1, 0);
         setHgrow(bookBox, Priority.ALWAYS);
-        setHgrow(instruction, Priority.ALWAYS);
+        
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date date = new Date();
         Text gameName = new Text("Scan Game: "+dateFormat.format(date));
         bookBox.add(gameName, 0, 0);
         bookBox.setHalignment(gameName, HPos.CENTER);
-        Region r = new Region();
-//        bookBox.add(r, 1, 1);
-//        bookBox.setHgrow(r, Priority.ALWAYS);
-//        final String cssDefault = "-fx-border-color: blue;\n"
-//                + "-fx-border-insets: 5;\n"
-//                + "-fx-border-width: 3;\n"
-//                + "-fx-border-style: dashed;\n";
+
         VBox labels = new VBox(10);
         bookBox.setHgrow(labels, Priority.ALWAYS);
         labels.setPrefHeight(800);
-//        labels.setStyle(cssDefault);
         bookBox.add(labels, 0, 1);
         Region r1 = new Region();
         Region r2 = new Region();
@@ -109,8 +97,8 @@ public class Scan extends GridPane {
         Label scanTicketLabel = new Label("Input");
         scanTicketLabel.setPrefWidth(100);
         scanTicketField = new TextArea();
+//        scanTicketField.requestFocus();
         scanTicketField.setPrefHeight(25);
-//        scanTicketField.setMaxHeight(25);
         scanTicketField.setPrefWidth(200);
         HBox inputRow = new HBox(4);
         Region r5 = new Region();
@@ -133,8 +121,12 @@ public class Scan extends GridPane {
                     bookIDLabel.setText(bookID+"");
                     int numSold = 0;
                     int price = 0;
-                    for (Ticket ticket : yesterday) {
-                        if (ticket.getGameNumber() == gameID) {
+                    // This gets the current active books so that the program
+                    // can iterate through them to find if the recently scanned
+                    // ticket is continued.
+                    List<Ticket> activeBooks = Manage.getActiveBookList();
+                    for (Ticket ticket : activeBooks) {
+                        if ((ticket.getGameNumber() == gameID) && (ticket.getBookNumber() == bookID)) {
                             numSold = ticketID - ticket.getTicketNumber();
                             for (Game game : games) {
                                 if (game.getGameNumber() == gameID) {
@@ -148,8 +140,17 @@ public class Scan extends GridPane {
                                             break;
                                         }
                                     }
-                                    System.out.println(duplicate);
+//                                    System.out.println(duplicate);
                                     if (duplicate == 0) {
+                                        for(Iterator<Ticket> iterator = activeBooks.iterator(); iterator.hasNext(); ) {
+                                            Ticket currentBook = iterator.next();
+                                            if ((currentBook.getGameNumber() == ticket.getGameNumber()) && (currentBook.getBookNumber() == ticket.getBookNumber())) {
+                                                System.out.println("Scan: Removing scanned ticket from activebook");
+                                                iterator.remove();
+                                                break;
+                                            }
+                                        }
+                                        Manage.updateActiveBookList(activeBooks);
                                         today.add(new Ticket(getTicketName(gameID), gameID, bookID, ticketID));
                                         result.add(new DayResult(getTicketName(gameID), gameID, getTicketValue(gameID), numSold, price));
                                     }                                    
@@ -175,27 +176,21 @@ public class Scan extends GridPane {
         Button finishDay = new Button("Finish Day");
         finishDay.setOnAction(
             (event) -> {
-                DatabaseTO.createDailyReport(today);
-                TableView<DayResult> table = new TableView();
-                TableColumn gameNameColumn = new TableColumn("Name");
-                gameNameColumn.setCellValueFactory(new PropertyValueFactory<>("gameName"));
-                TableColumn gameNumberColumn = new TableColumn("Game Number");
-                gameNumberColumn.setCellValueFactory(new PropertyValueFactory<>("gameNumber"));
-                TableColumn ticketValueColumn = new TableColumn("Ticket Value");
-                ticketValueColumn.setCellValueFactory(new PropertyValueFactory<>("ticketValue"));
-                TableColumn ticketSoldColumn = new TableColumn("Tickets Sold");
-                ticketSoldColumn.setCellValueFactory(new PropertyValueFactory<>("ticketSold"));
-                TableColumn totalValueColumn = new TableColumn("Total Value");
-                totalValueColumn.setCellValueFactory(new PropertyValueFactory<>("totalValue"));
-                table.getColumns().addAll(gameNameColumn, gameNumberColumn, ticketValueColumn, ticketSoldColumn, totalValueColumn);
-                table.setItems(FXCollections.observableArrayList(result));
+                List<Ticket> activeBooks = Manage.getActiveBookList();
+                for (Ticket ticket : activeBooks) {
+                    result.add(new DayResult(ticket.getGameName(), ticket.getGameNumber(), getTicketValue(ticket.getGameNumber()), 0, 0));
+                    today.add(ticket);
+                }
+                System.out.println(today);
+                DatabaseTO.createDailyReport(today, result);
+                ResultTable resultTable = new ResultTable(FXCollections.observableArrayList(result));
                 Alert alert = new Alert(AlertType.INFORMATION);
                 alert.getDialogPane().setMaxHeight(USE_PREF_SIZE);
                 alert.setTitle("Day Finished!");
                 alert.setHeaderText("Results for the Date: "+dateFormat.format(date));
                 ScrollPane scroll = new ScrollPane();
                 scroll.setMaxHeight(600);
-                scroll.setContent(table);
+                scroll.setContent(resultTable);
                 alert.getDialogPane().setContent(scroll);
                 alert.showAndWait();
             }
@@ -207,12 +202,36 @@ public class Scan extends GridPane {
         loadGames();
         getYesterdayJSON();
     }
-    protected void clearBox() {
+    
+    private VBox buildInstruction() {
+        VBox instruction = new VBox(1);
+        instruction.setPadding(new Insets(5, 5, 5, 5));
+        Text title = new Text("Instructions");
+        title.setStyle("-fx-underline: true");
+        instruction.getChildren().addAll(
+            title,
+            new Text("1. Scan the Ticket"),
+            new Text("2. Ticket scanned will be displayed"),
+            new Text("3. Scan next ticket")
+        );
+        return instruction;
+    }
+    
+    
+    
+    public static List<DayResult> getResultList() {
+        return result;
+    }
+    public static void updateResultList(List<DayResult> newResult) {
+        result = newResult;
+    }
+    
+    private void clearBox() {
         if (scanTicketField != null) {
             scanTicketField.clear();
         }
     }
-    public void getYesterdayJSON() {
+    private void getYesterdayJSON() {
         for(Ticket ticket : DatabaseTO.getTickets("Tickets"+getYesterdayDateString()+".json")) {
             yesterday.add(ticket);
         }
@@ -282,7 +301,7 @@ public class Scan extends GridPane {
         tickets.add(new Ticket(getTicketName(1011), 1011, 1614936, 21));
         tickets.add(new Ticket(getTicketName(1002), 1002, 1320339, 41));
         
-        DatabaseTO.createDailyReport(tickets);
+        DatabaseTO.createDailyReport(tickets, result);
     }
     public void そうですね() {
         System.out.println("Test");

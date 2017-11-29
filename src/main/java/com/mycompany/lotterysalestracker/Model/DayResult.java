@@ -16,7 +16,6 @@ public class DayResult {
         this.ticketValue = new SimpleIntegerProperty(ticketValue);
         this.ticketSold = new SimpleIntegerProperty(ticketSold);
         this.totalValue = new SimpleIntegerProperty(totalValue);
-        
     }    
     
     public String getGameName(){

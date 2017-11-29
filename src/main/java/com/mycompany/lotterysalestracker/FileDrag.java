@@ -9,7 +9,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.input.MouseEvent;
@@ -18,14 +17,15 @@ import javafx.stage.FileChooser;
 import javafx.stage.Window;
 
 public class FileDrag extends StackPane {
-    private List listeners = new ArrayList();
+    private final List listeners = new ArrayList();
     public FileDrag() {
         Rectangle fileInputZone = new Rectangle();
         fileInputZone.setWidth(400.0);
         fileInputZone.setHeight(100.0);
         fileInputZone.setFill(Color.LIGHTGREEN);
         
-        fileInputZone.setOnDragEntered((DragEvent event) -> {
+        fileInputZone.setOnDragEntered(
+            (DragEvent event) -> {
                 if(event.getSource() == fileInputZone && event.getDragboard().hasFiles()) {
                     fileInputZone.setFill(Color.DARKGREEN);
                 }
@@ -33,7 +33,8 @@ public class FileDrag extends StackPane {
             }
         );
         
-        fileInputZone.setOnDragExited((DragEvent event) -> {
+        fileInputZone.setOnDragExited(
+            (DragEvent event) -> {
                 fileInputZone.setFill(Color.LIGHTGREEN);
                 event.consume();
             }
@@ -42,7 +43,7 @@ public class FileDrag extends StackPane {
         fileInputZone.setOnDragOver(
             (DragEvent event) -> {
                 if(event.getDragboard().hasFiles()) {
-                    for (File f: event.getDragboard().getFiles()) {
+                    for (File f : event.getDragboard().getFiles()) {
                         event.acceptTransferModes(TransferMode.COPY);
                     }
                 }
@@ -52,7 +53,7 @@ public class FileDrag extends StackPane {
         fileInputZone.setOnDragDropped(
             (DragEvent event) -> {
                 if(event.getDragboard().hasFiles()) {
-                    for (File f: event.getDragboard().getFiles()) {
+                    for (File f : event.getDragboard().getFiles()) {
                         fireEvent(f.getPath());
                     }
                     event.setDropCompleted(true);
@@ -61,8 +62,7 @@ public class FileDrag extends StackPane {
             }
         );
         
-        fileInputZone.setOnMouseClicked(new EventHandler<MouseEvent>()
-        {
+        fileInputZone.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
                 FileChooser chooseFile = new FileChooser();
@@ -82,6 +82,9 @@ public class FileDrag extends StackPane {
         Label instruction = new Label("Click here to select file, or drag and drop a file here");
         this.getChildren().addAll(fileInputZone, instruction);
     }
+    // ====================================================================== //
+    // Generic set of interface methods
+    // ====================================================================== //
     public void addListener(FileListener listener) {
         listeners.add(listener);
     }
@@ -94,6 +97,10 @@ public class FileDrag extends StackPane {
             ((FileListener) listeners.next()).fileAccepted(file);
         }
     }
+    // ====================================================================== //
+    // Owner Window is received to prevent the user from interacting with
+    // the main application while selecting a file.
+    // ====================================================================== //
     private Window getOwnerWindow() {
         Scene parentScene = this.getScene();
         if (parentScene != null) {

@@ -1,7 +1,9 @@
 package com.mycompany.lotterysalestracker;
 
-// Extension of the TextField control to disallow nonnumeric values being
-// entered into the textfield
+// ====================================================================== //
+// Customized TextField designed to intercept any non numeric input into
+// a TextField
+// ====================================================================== //
 
 import javafx.scene.control.TextField;
 

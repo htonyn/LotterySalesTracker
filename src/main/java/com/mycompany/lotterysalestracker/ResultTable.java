@@ -5,9 +5,7 @@
  */
 package com.mycompany.lotterysalestracker;
 
-import com.mycompany.backend.DatabaseTO;
-import com.mycompany.lotterysalestracker.Model.Game;
-import com.mycompany.lotterysalestracker.Model.Ticket;
+import com.mycompany.lotterysalestracker.Model.DayResult;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,11 +14,11 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-public class TicketTable extends ScrollPane {
-    private TableView<Ticket> table = new TableView();
-    ObservableList<Ticket> tickets;
-    public TicketTable(ObservableList<Ticket> ticketList){
-        tickets = FXCollections.observableArrayList(ticketList);
+public class ResultTable extends ScrollPane {
+    private TableView<DayResult> table = new TableView();
+    ObservableList<DayResult> results;
+    public ResultTable(ObservableList<DayResult> resultList){
+        results = FXCollections.observableArrayList(resultList);
         
         TableColumn gameNameColumn = new TableColumn("Game Name");
         gameNameColumn.setCellValueFactory(new PropertyValueFactory<>("gameName"));
@@ -28,14 +26,17 @@ public class TicketTable extends ScrollPane {
         TableColumn gameNumberColumn = new TableColumn("Game Number");
         gameNumberColumn.setCellValueFactory(new PropertyValueFactory<>("gameNumber"));
         
-        TableColumn ticketNumberColumn = new TableColumn("Ticket Number");
-        ticketNumberColumn.setCellValueFactory(new PropertyValueFactory<>("ticketNumber"));
+        TableColumn ticketValueColumn = new TableColumn("Ticket Value");
+        ticketValueColumn.setCellValueFactory(new PropertyValueFactory<>("ticketValue"));
         
-        TableColumn bookNumberColumn = new TableColumn("Book Number");
-        bookNumberColumn.setCellValueFactory(new PropertyValueFactory<>("bookNumber"));
+        TableColumn ticketSoldColumn = new TableColumn("Ticket Number");
+        ticketSoldColumn.setCellValueFactory(new PropertyValueFactory<>("ticketSold"));
         
-        table.getColumns().addAll(gameNameColumn, gameNumberColumn, ticketNumberColumn, bookNumberColumn);
-        table.setItems(ticketList);
+        TableColumn bookNumberColumn = new TableColumn("Total Value");
+        bookNumberColumn.setCellValueFactory(new PropertyValueFactory<>("totalValue"));
+        
+        table.getColumns().addAll(gameNameColumn, gameNumberColumn, ticketValueColumn, ticketSoldColumn, bookNumberColumn);
+        table.setItems(resultList);
         table.setPrefWidth(700);
         this.setPrefWidth(800);
         setContent(table);
@@ -44,7 +45,7 @@ public class TicketTable extends ScrollPane {
     // Returns the selected ticket book in the GameTable TableView
     // Main purpose is used for removing games.
     // ====================================================================== //
-    public Ticket getSelectedItem() {
+    public DayResult getSelectedItem() {
         if(table.getSelectionModel().getSelectedItem() != null) {
             return table.getSelectionModel().getSelectedItem();
         }
@@ -57,8 +58,8 @@ public class TicketTable extends ScrollPane {
     // Future Update: In MVC, the tableView will be listening to one central
     // observable list thus removing the need for this.
     // ====================================================================== //
-    public void setItems(List<Ticket> ticketList) {
-        tickets = FXCollections.observableArrayList(ticketList);
-        table.setItems(tickets);
+    public void setItems(List<DayResult> ticketList) {
+        results = FXCollections.observableArrayList(ticketList);
+        table.setItems(results);
     }
 }

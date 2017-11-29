@@ -1,6 +1,5 @@
 package com.mycompany.lotterysalestracker;
 
-
 import com.mycompany.backend.DatabaseTO;
 import com.mycompany.lotterysalestracker.Model.Game;
 import java.util.List;
@@ -32,14 +31,23 @@ public class GameTable extends ScrollPane {
         this.setPrefWidth(800);
         this.setContent(table);
     }
-    
+    // ====================================================================== //
+    // Returns the selected game in the GameTable TableView
+    // Main purpose is used for removing games.
+    // ====================================================================== //
     public Game getSelectedItem() {
         if(table.getSelectionModel().getSelectedItem() != null) {
             return table.getSelectionModel().getSelectedItem();
         }
         return null;
     }
-    
+    // ====================================================================== //
+    // Upon adding or removing a game to the game list, this function will
+    // update the GameTable TableView so changes are seen immediately without
+    // reinitializing the object and readding it to the view.
+    // Future Update: In MVC, the tableView will be listening to one central
+    // observable list thus removing the need for this.
+    // ====================================================================== //
     public void setItems(List<Game> games) {
         list = FXCollections.observableArrayList(games);
         table.setItems(list);
