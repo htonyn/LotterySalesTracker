@@ -62,6 +62,7 @@ public class DatabaseTO {
             tickets = gson.fromJson(bufferedReader, new TypeToken<List<Ticket>>(){}.getType());
         } catch(FileNotFoundException fnfe) {
             fnfe.printStackTrace(System.out);
+            
         } finally {
             if (bufferedReader != null) {
                 try {

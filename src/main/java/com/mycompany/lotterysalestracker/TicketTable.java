@@ -5,8 +5,6 @@
  */
 package com.mycompany.lotterysalestracker;
 
-import com.mycompany.backend.DatabaseTO;
-import com.mycompany.lotterysalestracker.Model.Game;
 import com.mycompany.lotterysalestracker.Model.Ticket;
 import java.util.List;
 import javafx.collections.FXCollections;

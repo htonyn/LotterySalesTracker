@@ -68,7 +68,7 @@ public class Scan extends GridPane {
         bookBox.setHgrow(labels, Priority.ALWAYS);
         labels.setPrefHeight(800);
         bookBox.add(labels, 0, 1);
-        Region r1 = new Region();
+        Region r1 = new Region();        
         Region r2 = new Region();
         Region r3 = new Region();
         Region r4 = new Region();
@@ -124,6 +124,7 @@ public class Scan extends GridPane {
                     // This gets the current active books so that the program
                     // can iterate through them to find if the recently scanned
                     // ticket is continued.
+                    
                     List<Ticket> activeBooks = Manage.getActiveBookList();
                     for (Ticket ticket : activeBooks) {
                         if ((ticket.getGameNumber() == gameID) && (ticket.getBookNumber() == bookID)) {
@@ -132,6 +133,8 @@ public class Scan extends GridPane {
                                 if (game.getGameNumber() == gameID) {
                                     gameNameLabel.setText(game.getName());
                                     price = game.getGameValue() * numSold;
+                                    numSoldLabel.setText(numSold+" Tickets");
+                                    totalValueLabel.setText("$"+price);
                                     int duplicate = 0;
                                     for (Ticket ticketDupe : today) {
                                         System.out.println("Ticket: "+ticketDupe.getBookNumber()+" vs Scan: "+bookID);
@@ -153,15 +156,15 @@ public class Scan extends GridPane {
                                         Manage.updateActiveBookList(activeBooks);
                                         today.add(new Ticket(getTicketName(gameID), gameID, bookID, ticketID));
                                         result.add(new DayResult(getTicketName(gameID), gameID, getTicketValue(gameID), numSold, price));
-                                    }                                    
+                                    }
+                                    Platform.runLater(() -> {
+                                        scanTicketField.clear(); 
+                                     });
                                     break;
                                 }
                             }
                         }
                     }
-                    numSoldLabel.setText(numSold+" Tickets");
-                    // Pull book size
-                    totalValueLabel.setText("$"+price);
                     Platform.runLater(() -> {
                        scanTicketField.clear(); 
                     });

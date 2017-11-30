@@ -301,6 +301,7 @@ public class Manage extends GridPane {
                             gameInputName = game.getName();
                         } else {
                             gameInputName = "Game not found";
+//                            addGameDialog();
                         }
                     }
                     gameName.setText(gameInputName);

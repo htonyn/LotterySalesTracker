@@ -31,6 +31,7 @@ public class MainApp extends Application {
         root.setVgrow(navList, Priority.ALWAYS);
         content.setFillWidth(true);      
         navList.setMinWidth(100);
+        navList.setStyle("-fx-background-color: rgb(29, 29, 29);");
         
         Button manageNav = new Button("Manage");
         manageNav.setMaxWidth(Double.MAX_VALUE);
